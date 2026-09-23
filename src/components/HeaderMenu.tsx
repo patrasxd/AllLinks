@@ -23,6 +23,7 @@ export function HeaderMenu() {
             : 'light',
         )
       }
+      supportUrl=""
       labels={{
         language: t.language,
         theme: t.theme,
