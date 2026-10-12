@@ -1,20 +1,81 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import { describe, it, expect } from 'vitest'
-import { ThemeProvider } from '@all/ui'
+import { describe, it, expect, beforeEach } from 'vitest'
+import { ThemeProvider, MotionProvider, useTheme } from '@all/ui'
 import { I18nProvider } from '../i18n'
 import App from '../App'
+
+function ThemedApp() {
+  const { isEink } = useTheme()
+  return (
+    <MotionProvider forcedNone={isEink}>
+      <I18nProvider>
+        <App />
+      </I18nProvider>
+    </MotionProvider>
+  )
+}
 
 function renderApp() {
   return render(
     <ThemeProvider defaultTheme="dark" storageKey="test:theme">
-      <I18nProvider>
-        <App />
-      </I18nProvider>
+      <ThemedApp />
     </ThemeProvider>,
   )
 }
 
 describe('AllLinks Application', () => {
+  beforeEach(() => {
+    localStorage.clear()
+    localStorage.setItem('alllinks:language', 'en')
+  })
+
+  it('switches language and persists it across remounts', () => {
+    const app = renderApp()
+    fireEvent.click(screen.getByRole('button', { name: 'Toggle menu' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Polski' }))
+    expect(document.documentElement.lang).toBe('pl')
+    expect(localStorage.getItem('alllinks:language')).toBe('pl')
+    expect(screen.getByRole('button', { name: /Projekty/ })).toBeInTheDocument()
+    app.unmount()
+    renderApp()
+    expect(screen.getByRole('button', { name: /Projekty/ })).toBeInTheDocument()
+  })
+
+  it('switches all four themes and disables motion for E-Ink', () => {
+    renderApp()
+    fireEvent.click(screen.getByRole('button', { name: 'Toggle menu' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Light' }))
+    expect(document.documentElement.dataset.theme).toBe('light')
+    fireEvent.click(screen.getByRole('button', { name: 'On' }))
+    expect(document.documentElement.dataset.theme).toBe('e-ink-light')
+    expect(document.documentElement.dataset.motion).toBe('none')
+    fireEvent.click(screen.getByRole('button', { name: 'Dark' }))
+    expect(document.documentElement.dataset.theme).toBe('e-ink-dark')
+    fireEvent.click(screen.getByRole('button', { name: 'Off' }))
+    expect(document.documentElement.dataset.theme).toBe('dark')
+    expect(document.documentElement.dataset.motion).toBe('normal')
+    expect(localStorage.getItem('test:theme')).toBe('dark')
+  })
+
+  it('closes the menu with Escape and outside click', async () => {
+    renderApp()
+    fireEvent.click(screen.getByRole('button', { name: 'Toggle menu' }))
+    expect(screen.getByRole('dialog')).toBeInTheDocument()
+    fireEvent.keyDown(document, { key: 'Escape' })
+    await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument())
+    fireEvent.click(screen.getByRole('button', { name: 'Toggle menu' }))
+    fireEvent.mouseDown(document.body)
+    await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument())
+  })
+
+  it('exposes valid HTTPS destinations and safe external links', () => {
+    renderApp()
+    for (const link of screen.getAllByRole('link')) {
+      expect(new URL(link.getAttribute('href')!).protocol).toBe('https:')
+      expect(link).toHaveAttribute('target', '_blank')
+      expect(link).toHaveAttribute('rel', 'noopener noreferrer')
+    }
+  })
   it('renders hero title and ecosystem links', () => {
     renderApp()
 

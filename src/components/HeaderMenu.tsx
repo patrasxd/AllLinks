@@ -8,21 +8,15 @@ export function HeaderMenu() {
   return (
     <UiHeaderMenu
       locale={locale}
-      onLocaleChange={(loc) => setLocale(loc as any)}
+      onLocaleChange={(loc) => {
+        if (loc === 'en' || loc === 'pl') setLocale(loc)
+      }}
       theme={theme}
-      onThemeChange={(th) => setTheme(th as any)}
+      onThemeChange={(value) => {
+        if (value === 'dark' || value === 'light' || value === 'e-ink-dark' || value === 'e-ink-light') setTheme(value)
+      }}
       isEink={isEink}
-      onEinkChange={(enable) =>
-        setTheme(
-          enable
-            ? isDark
-              ? 'e-ink-dark'
-              : 'e-ink-light'
-            : isDark
-            ? 'dark'
-            : 'light',
-        )
-      }
+      onEinkChange={(enable) => setTheme(enable ? (isDark ? 'e-ink-dark' : 'e-ink-light') : isDark ? 'dark' : 'light')}
       supportUrl=""
       labels={{
         language: t.language,

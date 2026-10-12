@@ -1,12 +1,5 @@
 import React from 'react'
-import {
-  GamepadIcon,
-  ToolsIcon,
-  GithubIcon,
-  YoutubeIcon,
-  XIcon,
-  LinkedinIcon,
-} from '../components/icons'
+import { GamepadIcon, ToolsIcon, GithubIcon, YoutubeIcon, XIcon, LinkedinIcon } from '../components/icons'
 import type { Translations } from '../i18n'
 
 export type LinkCategory = 'projects' | 'social'

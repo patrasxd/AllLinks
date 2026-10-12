@@ -16,6 +16,10 @@ vite.config.d.ts
 vite.config.js
 vitest.config.d.ts
 vitest.config.js
+playwright-report
+test-results
+playwright.config.js
+playwright.config.d.ts
 
 # Editor directories and files
 .vscode/*

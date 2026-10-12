@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" style="background-color: #0a0a0a; color: #efefef;">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
@@ -10,27 +10,32 @@
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content="AllLinks" />
     <meta name="twitter:description" content="Official hub for AllGames, AllTools, and developer profiles." />
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71'/><path d='M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71'/></svg>" />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71'/><path d='M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71'/></svg>"
+    />
     <title>AllLinks</title>
     <script>
-      (function() {
+      ;(function () {
         try {
-          var t = localStorage.getItem('alllinks:theme') || localStorage.getItem('all_theme') || 'dark';
-          document.documentElement.setAttribute('data-theme', t);
-          document.documentElement.setAttribute('data-all-theme', t);
-          var isLight = t === 'light' || t === 'e-ink-light';
-          var bg = isLight ? '#f8fafc' : '#0a0a0a';
-          var fg = isLight ? '#0f172a' : '#efefef';
-          document.documentElement.style.backgroundColor = bg;
-          document.documentElement.style.color = fg;
+          var saved = localStorage.getItem('alllinks:theme')
+          var t = ['dark', 'light', 'e-ink-light', 'e-ink-dark'].indexOf(saved) !== -1 ? saved : 'dark'
+          document.documentElement.setAttribute('data-theme', t)
+          document.documentElement.setAttribute('data-all-theme', t)
+          var isLight = t === 'light' || t === 'e-ink-light'
+          var bg = t === 'e-ink-light' ? '#ffffff' : t === 'e-ink-dark' ? '#000000' : isLight ? '#f8fafc' : '#0a0a0a'
+          var fg = t === 'e-ink-light' ? '#000000' : t === 'e-ink-dark' ? '#ffffff' : isLight ? '#0f172a' : '#efefef'
+          document.documentElement.style.backgroundColor = 'var(--all-bg, ' + bg + ')'
+          document.documentElement.style.color = 'var(--all-text, ' + fg + ')'
           if (t.indexOf('e-ink') !== -1) {
-            document.documentElement.setAttribute('data-eink', 'true');
+            document.documentElement.setAttribute('data-eink', 'true')
           }
         } catch (e) {}
-      })();
+      })()
     </script>
   </head>
-  <body style="background-color: inherit; color: inherit; margin: 0; padding: 0;">
+  <body style="background-color: inherit; color: inherit; margin: 0; padding: 0">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

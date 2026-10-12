@@ -149,7 +149,9 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
     setLocaleState(newLocale)
     try {
       localStorage.setItem(STORAGE_KEY, newLocale)
-    } catch {}
+    } catch {
+      // Preferences remain usable when browser storage is unavailable.
+    }
   }
 
   useEffect(() => {
@@ -158,11 +160,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
 
   const t = translations[locale]
 
-  return React.createElement(
-    I18nContext.Provider,
-    { value: { locale, setLocale, t } },
-    children,
-  )
+  return React.createElement(I18nContext.Provider, { value: { locale, setLocale, t } }, children)
 }
 
 export function useI18n(): I18nContextValue {

@@ -1,6 +1,5 @@
-import React from 'react'
 import { motion } from 'framer-motion'
-import { Badge } from '@all/ui'
+import { Badge, useMotion } from '@all/ui'
 import type { LinkItem } from '../data/links'
 import { useI18n } from '../i18n'
 
@@ -10,7 +9,7 @@ interface LinkCardProps {
 }
 
 const cardVariants = {
-  hidden: (i: number) => ({
+  hidden: () => ({
     opacity: 0,
     y: 24,
   }),
@@ -27,6 +26,7 @@ const cardVariants = {
 
 export function LinkCard({ link, index }: LinkCardProps) {
   const { locale, t } = useI18n()
+  const { isMotionEnabled } = useMotion()
   const Icon = link.icon
 
   const name = link.getTitle(t)
@@ -40,24 +40,19 @@ export function LinkCard({ link, index }: LinkCardProps) {
       target="_blank"
       rel="noopener noreferrer"
       className="tool-card link-card"
-      variants={cardVariants}
-      initial="hidden"
+      variants={isMotionEnabled ? cardVariants : undefined}
+      initial={isMotionEnabled ? 'hidden' : false}
       animate="visible"
       custom={index}
       role="link"
       aria-label={t.openAria(name)}
       id={`link-card-${link.id}`}
-      whileHover={{ y: -3 }}
-      whileTap={{ scale: 0.99 }}
-      transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+      whileHover={isMotionEnabled ? { y: -3 } : undefined}
+      whileTap={isMotionEnabled ? { scale: 0.99 } : undefined}
+      transition={isMotionEnabled ? { type: 'spring', stiffness: 400, damping: 30 } : { duration: 0 }}
     >
       {/* Animated sketch border: SVG rect with stroke-dashoffset animation */}
-      <svg
-        className="link-card-sketch-border"
-        viewBox="0 0 300 220"
-        preserveAspectRatio="none"
-        aria-hidden="true"
-      >
+      <svg className="link-card-sketch-border" viewBox="0 0 300 220" preserveAspectRatio="none" aria-hidden="true">
         <rect x="1" y="1" width="298" height="218" rx="3" />
       </svg>
 

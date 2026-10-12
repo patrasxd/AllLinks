@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { AppFooter } from '@all/ui'
+import { AppFooter, useMotion } from '@all/ui'
 import { useI18n } from '../i18n'
 import { LINKS_DATA, type LinkCategory } from '../data/links'
 import { LinkCard } from '../components/LinkCard'
@@ -29,6 +29,7 @@ const lineVariants = {
 
 export function HomePage() {
   const { t } = useI18n()
+  const { isMotionEnabled } = useMotion()
   const [selectedCategory, setSelectedCategory] = useState<LinkCategory | 'all'>('all')
 
   const filterOptions = useMemo(() => {
@@ -58,18 +59,20 @@ export function HomePage() {
         {/* Hero Section */}
         <motion.section
           className="home-hero"
-          variants={heroVariants}
-          initial="hidden"
+          variants={isMotionEnabled ? heroVariants : undefined}
+          initial={isMotionEnabled ? 'hidden' : false}
           animate="visible"
           aria-labelledby="home-title"
         >
-          <motion.p className="home-eyebrow" variants={lineVariants}>
+          <motion.p className="home-eyebrow" variants={isMotionEnabled ? lineVariants : undefined}>
             {t.heroEyebrow}
           </motion.p>
-          <motion.h1 className="home-title" id="home-title" variants={lineVariants}>
-            All<br />Links
+          <motion.h1 className="home-title" id="home-title" variants={isMotionEnabled ? lineVariants : undefined}>
+            All
+            <br />
+            Links
           </motion.h1>
-          <motion.p className="home-description" variants={lineVariants}>
+          <motion.p className="home-description" variants={isMotionEnabled ? lineVariants : undefined}>
             {t.heroDescription}
           </motion.p>
         </motion.section>
@@ -80,9 +83,9 @@ export function HomePage() {
             <motion.p
               className="home-links-label"
               id="links-section-label"
-              initial={{ opacity: 0 }}
+              initial={isMotionEnabled ? { opacity: 0 } : false}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.3, duration: 0.5 }}
+              transition={isMotionEnabled ? { delay: 0.3, duration: 0.5 } : { duration: 0 }}
             >
               {t.linksCount(filteredLinks.length)}
             </motion.p>
@@ -92,9 +95,9 @@ export function HomePage() {
               className="home-filters"
               role="group"
               aria-label={t.filterLabel}
-              initial={{ opacity: 0, y: 10 }}
+              initial={isMotionEnabled ? { opacity: 0, y: 10 } : false}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.35, duration: 0.4 }}
+              transition={isMotionEnabled ? { delay: 0.35, duration: 0.4 } : { duration: 0 }}
             >
               {filterOptions.map((option) => {
                 const isSelected = selectedCategory === option.id
@@ -105,12 +108,13 @@ export function HomePage() {
                     id={`filter-${option.id}-btn`}
                     className={`home-filter-chip ${isSelected ? 'home-filter-chip--active' : ''}`}
                     onClick={() => setSelectedCategory(option.id)}
+                    aria-pressed={isSelected}
                   >
                     {isSelected && (
                       <motion.span
                         className="home-filter-indicator"
-                        layoutId="activeFilterIndicator"
-                        transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+                        layoutId={isMotionEnabled ? 'activeFilterIndicator' : undefined}
+                        transition={isMotionEnabled ? { type: 'spring', stiffness: 500, damping: 35 } : { duration: 0 }}
                       />
                     )}
                     <span className="home-filter-text">{option.label}</span>
@@ -122,17 +126,17 @@ export function HomePage() {
           </div>
 
           {/* Animated Links Grid */}
-          <motion.div className="links-grid" role="list" layout>
+          <motion.div className="links-grid" role="list" layout={isMotionEnabled}>
             <AnimatePresence mode="popLayout">
               {filteredLinks.map((link, i) => (
                 <motion.div
                   key={link.id}
                   role="listitem"
-                  layout
-                  initial={{ opacity: 0, scale: 0.95 }}
+                  layout={isMotionEnabled}
+                  initial={isMotionEnabled ? { opacity: 0, scale: 0.95 } : false}
                   animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                  exit={isMotionEnabled ? { opacity: 0, scale: 0.95 } : undefined}
+                  transition={isMotionEnabled ? { duration: 0.35, ease: [0.16, 1, 0.3, 1] } : { duration: 0 }}
                 >
                   <LinkCard link={link} index={i} />
                 </motion.div>

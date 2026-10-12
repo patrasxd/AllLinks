@@ -23,6 +23,12 @@ Built with `@all/ui` design system and deployed to GitHub Pages.
 
 ## Development
 
+Use Node 22 (the CI runtime). The `AllUI/` Git submodule pins the same shared UI revision as AllGames and AllTools; the root dependency is `"@all/ui": "file:./AllUI"`. Initialize it before installation:
+
+```bash
+git submodule update --init --recursive
+```
+
 ```bash
 # Install dependencies
 npm install
@@ -33,6 +39,17 @@ npm run dev
 # Run unit tests
 npm test
 
+# Quality checks
+npm run lint
+npm run format:check
+npm run typecheck
+
+# Browser checks (four themes, mobile portrait/landscape, desktop)
+npx playwright install chromium
+npm run test:e2e
+
 # Build production bundle
 npm run build
 ```
+
+For local browser checks with installed Microsoft Edge, set `PLAYWRIGHT_CHANNEL=msedge` before `npm run test:e2e`. Fonts are bundled locally; rendering does not depend on Google Fonts. Portfolio content intentionally scrolls vertically, while shared tokens, preferences menu, themes and motion follow the AllUI contracts.
