@@ -21,13 +21,15 @@ for (const viewport of [
       await expect(page.locator('.link-card')).toHaveCount(6)
       await expect(page.locator('html')).toHaveAttribute('data-theme', theme)
       await expect(page.locator('html')).toHaveAttribute('data-motion', theme.startsWith('e-ink') ? 'none' : 'normal')
+      await expect(page.locator('#filter-all-btn')).toHaveAttribute('aria-pressed', 'true')
+      await expect(page.locator('#filter-all-btn')).toHaveCSS('height', '24px')
       if (theme.startsWith('e-ink')) {
-        await expect(page.locator('.home-filter-indicator')).toBeHidden()
+        await expect(page.locator('.all-filter-indicator')).toBeHidden()
         await expect(page.locator('#filter-all-btn')).toHaveCSS(
           'background-color',
           theme === 'e-ink-dark' ? 'rgb(255, 255, 255)' : 'rgb(0, 0, 0)',
         )
-        await expect(page.locator('#filter-all-btn .home-filter-count')).toHaveCSS(
+        await expect(page.locator('#filter-all-btn .all-filter-count')).toHaveCSS(
           'color',
           theme === 'e-ink-dark' ? 'rgb(0, 0, 0)' : 'rgb(255, 255, 255)',
         )
@@ -46,9 +48,14 @@ for (const viewport of [
       await expect(page.locator('html')).toHaveAttribute('lang', 'pl')
       await page.keyboard.press('Escape')
       await expect(page.getByRole('dialog')).toHaveCount(0)
-      await page.locator('#filter-projects-btn').click()
+      await page.locator('#filter-projects-btn').focus()
+      await page.keyboard.press('Enter')
       await expect(page.locator('.link-card')).toHaveCount(2)
       await expect(page.locator('#filter-projects-btn')).toHaveAttribute('aria-pressed', 'true')
+      await page.locator('#filter-all-btn').focus()
+      await page.keyboard.press('Space')
+      await expect(page.locator('.link-card')).toHaveCount(6)
+      await expect(page.locator('#filter-all-btn')).toHaveAttribute('aria-pressed', 'true')
       await page.reload()
       await expect(page.locator('html')).toHaveAttribute('lang', 'pl')
       expect(externalRequests).toEqual([])
@@ -60,6 +67,10 @@ test('reduced motion keeps cards static and keyboard navigation usable', async (
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await page.goto('./')
   await expect(page.locator('html')).toHaveAttribute('data-motion', 'none')
+  await expect(page.locator('.all-filter-indicator')).toHaveCount(0)
+  await page.locator('#filter-projects-btn').focus()
+  await page.keyboard.press('Enter')
+  await expect(page.locator('.link-card')).toHaveCount(2)
   const card = page.locator('#link-card-allgames')
   await card.hover()
   await expect(card).toHaveCSS('transform', 'none')

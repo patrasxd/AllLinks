@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { AppFooter, useMotion } from '@all/ui'
+import { AppFooter, FilterGroup, useMotion } from '@all/ui'
 import { useI18n } from '../i18n'
 import { LINKS_DATA, type LinkCategory } from '../data/links'
 import { LinkCard } from '../components/LinkCard'
@@ -90,39 +90,16 @@ export function HomePage() {
               {t.linksCount(filteredLinks.length)}
             </motion.p>
 
-            {/* Filter chips with active spring indicator */}
-            <motion.div
-              className="home-filters"
-              role="group"
-              aria-label={t.filterLabel}
-              initial={isMotionEnabled ? { opacity: 0, y: 10 } : false}
-              animate={{ opacity: 1, y: 0 }}
-              transition={isMotionEnabled ? { delay: 0.35, duration: 0.4 } : { duration: 0 }}
-            >
-              {filterOptions.map((option) => {
-                const isSelected = selectedCategory === option.id
-                return (
-                  <button
-                    key={option.id}
-                    type="button"
-                    id={`filter-${option.id}-btn`}
-                    className={`home-filter-chip ${isSelected ? 'home-filter-chip--active' : ''}`}
-                    onClick={() => setSelectedCategory(option.id)}
-                    aria-pressed={isSelected}
-                  >
-                    {isSelected && (
-                      <motion.span
-                        className="home-filter-indicator"
-                        layoutId={isMotionEnabled ? 'activeFilterIndicator' : undefined}
-                        transition={isMotionEnabled ? { type: 'spring', stiffness: 500, damping: 35 } : { duration: 0 }}
-                      />
-                    )}
-                    <span className="home-filter-text">{option.label}</span>
-                    <span className="home-filter-count">{option.count}</span>
-                  </button>
-                )
-              })}
-            </motion.div>
+            <FilterGroup
+              label={t.filterLabel}
+              value={selectedCategory}
+              onChange={setSelectedCategory}
+              options={filterOptions.map((option) => ({
+                ...option,
+                value: option.id,
+                buttonId: `filter-${option.id}-btn`,
+              }))}
+            />
           </div>
 
           {/* Animated Links Grid */}
