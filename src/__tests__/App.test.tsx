@@ -31,7 +31,7 @@ describe('AllLinks Application', () => {
 
   it('switches language and persists it across remounts', () => {
     const app = renderApp()
-    fireEvent.click(screen.getByRole('button', { name: 'Toggle menu' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Open preferences menu' }))
     fireEvent.click(screen.getByRole('button', { name: 'Polski' }))
     expect(document.documentElement.lang).toBe('pl')
     expect(localStorage.getItem('alllinks:language')).toBe('pl')
@@ -43,7 +43,7 @@ describe('AllLinks Application', () => {
 
   it('switches all four themes and disables motion for E-Ink', () => {
     renderApp()
-    fireEvent.click(screen.getByRole('button', { name: 'Toggle menu' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Open preferences menu' }))
     fireEvent.click(screen.getByRole('button', { name: 'Light' }))
     expect(document.documentElement.dataset.theme).toBe('light')
     fireEvent.click(screen.getByRole('button', { name: 'On' }))
@@ -59,11 +59,11 @@ describe('AllLinks Application', () => {
 
   it('closes the menu with Escape and outside click', async () => {
     renderApp()
-    fireEvent.click(screen.getByRole('button', { name: 'Toggle menu' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Open preferences menu' }))
     expect(screen.getByRole('dialog')).toBeInTheDocument()
     fireEvent.keyDown(document, { key: 'Escape' })
     await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument())
-    fireEvent.click(screen.getByRole('button', { name: 'Toggle menu' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Open preferences menu' }))
     fireEvent.mouseDown(document.body)
     await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument())
   })

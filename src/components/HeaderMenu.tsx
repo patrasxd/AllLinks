@@ -3,7 +3,7 @@ import { useI18n } from '../i18n'
 
 export function HeaderMenu() {
   const { theme, setTheme, isEink, isDark } = useTheme()
-  const { locale, setLocale, t } = useI18n()
+  const { locale, setLocale } = useI18n()
 
   return (
     <UiHeaderMenu
@@ -18,18 +18,6 @@ export function HeaderMenu() {
       isEink={isEink}
       onEinkChange={(enable) => setTheme(enable ? (isDark ? 'e-ink-dark' : 'e-ink-light') : isDark ? 'dark' : 'light')}
       supportUrl=""
-      labels={{
-        language: t.language,
-        theme: t.theme,
-        darkMode: t.darkMode,
-        lightMode: t.lightMode,
-        einkMode: t.einkMode,
-        einkOff: t.einkOff,
-        einkOn: t.einkOn,
-        preferences: t.preferences,
-        menuToggleAria: t.menuToggleAria,
-        closeMenuAria: t.closeMenuAria,
-      }}
     />
   )
 }

@@ -12,6 +12,7 @@
     "lint": "eslint .",
     "format:check": "prettier --check .",
     "format": "prettier --write .",
+    "test:ui": "npm --prefix AllUI test",
     "typecheck": "tsc -b",
     "test:e2e": "playwright test"
   },

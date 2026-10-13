@@ -1,3 +1,4 @@
+import { safeGetItem, safeSetItem } from '@all/ui'
 import React, { createContext, useContext, useEffect, useState } from 'react'
 
 export type Locale = 'en' | 'pl'
@@ -123,7 +124,7 @@ const STORAGE_KEY = 'alllinks:language'
 
 function detectInitialLocale(): Locale {
   try {
-    const saved = localStorage.getItem(STORAGE_KEY)
+    const saved = safeGetItem(STORAGE_KEY)
     if (saved === 'en' || saved === 'pl') return saved
 
     const browserLang = navigator.language.toLowerCase()
@@ -147,11 +148,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
 
   const setLocale = (newLocale: Locale) => {
     setLocaleState(newLocale)
-    try {
-      localStorage.setItem(STORAGE_KEY, newLocale)
-    } catch {
-      // Preferences remain usable when browser storage is unavailable.
-    }
+    safeSetItem(STORAGE_KEY, newLocale)
   }
 
   useEffect(() => {

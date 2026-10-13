@@ -1,93 +1,27 @@
-import { motion } from 'framer-motion'
-import { Badge, useMotion } from '@all/ui'
+import { CatalogCard } from '@all/ui'
 import type { LinkItem } from '../data/links'
 import { useI18n } from '../i18n'
 
-interface LinkCardProps {
-  link: LinkItem
-  index: number
-}
-
-const cardVariants = {
-  hidden: () => ({
-    opacity: 0,
-    y: 24,
-  }),
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: {
-      delay: i * 0.08,
-      duration: 0.5,
-      ease: [0.16, 1, 0.3, 1],
-    },
-  }),
-}
-
-export function LinkCard({ link, index }: LinkCardProps) {
+export function LinkCard({ link, index }: { link: LinkItem; index: number }) {
   const { locale, t } = useI18n()
-  const { isMotionEnabled } = useMotion()
   const Icon = link.icon
-
   const name = link.getTitle(t)
-  const description = link.getDescription(t)
-  const tags = link.tags[locale] || link.tags.en
-  const visibleTags = tags.slice(0, 3)
-
   return (
-    <motion.a
-      href={link.url}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="tool-card link-card"
-      variants={isMotionEnabled ? cardVariants : undefined}
-      initial={isMotionEnabled ? 'hidden' : false}
-      animate="visible"
-      custom={index}
-      role="link"
-      aria-label={t.openAria(name)}
+    <CatalogCard
       id={`link-card-${link.id}`}
-      whileHover={isMotionEnabled ? { y: -3 } : undefined}
-      whileTap={isMotionEnabled ? { scale: 0.99 } : undefined}
-      transition={isMotionEnabled ? { type: 'spring', stiffness: 400, damping: 30 } : { duration: 0 }}
-    >
-      {/* Animated sketch border: SVG rect with stroke-dashoffset animation */}
-      <svg className="link-card-sketch-border" viewBox="0 0 300 220" preserveAspectRatio="none" aria-hidden="true">
-        <rect x="1" y="1" width="298" height="218" rx="3" />
-      </svg>
-
-      <div>
-        <span className="link-card-icon" aria-hidden="true">
-          <Icon size={24} />
-        </span>
-        <h2 className="link-card-name">{name}</h2>
-        <p className="link-card-description">{description}</p>
-      </div>
-
-      <div className="link-card-footer">
-        <div className="link-card-tags" aria-label={t.toolTagsAria}>
-          {visibleTags.map((tag) => (
-            <Badge key={tag} size="sm">
-              {tag}
-            </Badge>
-          ))}
-        </div>
-        <span className="link-card-play" aria-hidden="true">
-          {t.open}
-          <svg
-            width="12"
-            height="12"
-            viewBox="0 0 12 12"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M2 6h8M6 2l4 4-4 4" />
-          </svg>
-        </span>
-      </div>
-    </motion.a>
+      className="link-card"
+      href={link.url}
+      external
+      title={name}
+      description={link.getDescription(t)}
+      icon={<Icon size={24} />}
+      tags={(link.tags[locale] || link.tags.en).slice(0, 3)}
+      tagsLabel={t.toolTagsAria}
+      actionLabel={t.open}
+      ariaLabel={t.openAria(name)}
+      clampDescription
+      actionTone="dim"
+      index={index}
+    />
   )
 }

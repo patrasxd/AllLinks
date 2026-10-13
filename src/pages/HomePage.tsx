@@ -1,31 +1,9 @@
 import { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { AppFooter, FilterGroup, useMotion } from '@all/ui'
+import { AppFooter, DirectoryHero, CatalogSectionHeader, CatalogGrid, FilterGroup, useMotion } from '@all/ui'
 import { useI18n } from '../i18n'
 import { LINKS_DATA, type LinkCategory } from '../data/links'
 import { LinkCard } from '../components/LinkCard'
-
-const heroVariants = {
-  hidden: {},
-  visible: () => ({
-    transition: { staggerChildren: 0.07, delayChildren: 0.1 },
-  }),
-}
-
-const lineVariants = {
-  hidden: () => ({
-    opacity: 0,
-    y: 20,
-  }),
-  visible: () => ({
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.6,
-      ease: [0.16, 1, 0.3, 1],
-    },
-  }),
-}
 
 export function HomePage() {
   const { t } = useI18n()
@@ -57,53 +35,44 @@ export function HomePage() {
     <div className="home-page">
       <div className="container">
         {/* Hero Section */}
-        <motion.section
-          className="home-hero"
-          variants={isMotionEnabled ? heroVariants : undefined}
-          initial={isMotionEnabled ? 'hidden' : false}
-          animate="visible"
-          aria-labelledby="home-title"
-        >
-          <motion.p className="home-eyebrow" variants={isMotionEnabled ? lineVariants : undefined}>
-            {t.heroEyebrow}
-          </motion.p>
-          <motion.h1 className="home-title" id="home-title" variants={isMotionEnabled ? lineVariants : undefined}>
-            All
-            <br />
-            Links
-          </motion.h1>
-          <motion.p className="home-description" variants={isMotionEnabled ? lineVariants : undefined}>
-            {t.heroDescription}
-          </motion.p>
-        </motion.section>
+        <DirectoryHero
+          title={
+            <>
+              All
+              <br />
+              Links
+            </>
+          }
+          eyebrow={t.heroEyebrow}
+          description={t.heroDescription}
+          tone="dim"
+          compactMobile
+        />
 
         {/* Filter Bar & Links Grid */}
         <section aria-labelledby="links-section-label">
-          <div className="home-section-header">
-            <motion.p
-              className="home-links-label"
-              id="links-section-label"
-              initial={isMotionEnabled ? { opacity: 0 } : false}
-              animate={{ opacity: 1 }}
-              transition={isMotionEnabled ? { delay: 0.3, duration: 0.5 } : { duration: 0 }}
-            >
-              {t.linksCount(filteredLinks.length)}
-            </motion.p>
-
-            <FilterGroup
-              label={t.filterLabel}
-              value={selectedCategory}
-              onChange={setSelectedCategory}
-              options={filterOptions.map((option) => ({
-                ...option,
-                value: option.id,
-                buttonId: `filter-${option.id}-btn`,
-              }))}
-            />
-          </div>
+          <CatalogSectionHeader
+            label={t.linksCount(filteredLinks.length)}
+            labelId="links-section-label"
+            tone="dim"
+            filters={
+              <>
+                <FilterGroup
+                  label={t.filterLabel}
+                  value={selectedCategory}
+                  onChange={setSelectedCategory}
+                  options={filterOptions.map((option) => ({
+                    ...option,
+                    value: option.id,
+                    buttonId: `filter-${option.id}-btn`,
+                  }))}
+                />
+              </>
+            }
+          />
 
           {/* Animated Links Grid */}
-          <motion.div className="links-grid" role="list" layout={isMotionEnabled}>
+          <CatalogGrid className="links-grid" singleColumnAt="medium">
             <AnimatePresence mode="popLayout">
               {filteredLinks.map((link, i) => (
                 <motion.div
@@ -119,7 +88,7 @@ export function HomePage() {
                 </motion.div>
               ))}
             </AnimatePresence>
-          </motion.div>
+          </CatalogGrid>
         </section>
 
         {/* Footer */}
